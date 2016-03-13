@@ -40,7 +40,7 @@ class Food extends Thing {
     constructor(left: number, top: number) {
         let img = new Image();
         img.src = 'images/food.png';
-        super('food', img, left, top);
+        super(' food', img, left, top);
         this.back = context.getImageData(this.left * size, this.top * size, size, size);
     }
 }
@@ -104,7 +104,7 @@ class Player extends Mover {
     constructor(left: number, top: number) {
         let img = new Image();
         img.src = 'images/player.png';
-        super('player', img, left, top);
+        super(' player', img, left, top);
     }
 }
 
@@ -299,9 +299,13 @@ function moveEnemies() {
 
 
 
+                if (valid.walls = 3) {
+                    grid[enemies[i].oldLeft][enemies[i].oldTop][0] = 'w';
+                } else {
+                    grid[enemies[i].oldLeft][enemies[i].oldTop][0] = ' ';
+                }
 
-
-                grid[enemies[i].oldLeft][enemies[i].oldTop] = '';
+                grid[enemies[i].oldLeft][enemies[i].oldTop][0] = ' ';
                 grid[enemies[i].left][enemies[i].top] = enemies[i].type;
 
 
@@ -323,24 +327,69 @@ function validMoves(thing: Thing) {
         up: true,
         right: true,
         down: true,
-        count: 4
+        count: 4,
+        walls: 0
     };
-    if (grid[thing.left - 1][thing.top][0] === 'x') {
-        valid.left = false;
-        valid.count--;
+    if (thing.type === ' player') {
+        if (grid[thing.left - 1][thing.top][0] === 'x') {
+            valid.left = false;
+            valid.count--;
+            if (grid[thing.left - 1][thing.top] === 'xwall') {
+                valid.walls++;
+            }
+        }
+        if (grid[thing.left][thing.top - 1][0] === 'x') {
+            valid.up = false;
+            valid.count--;
+            if (grid[thing.left - 1][thing.top] === 'xwall') {
+                valid.walls++;
+            }
+        }
+        if (grid[thing.left + 1][thing.top][0] === 'x') {
+            valid.right = false;
+            valid.count--;
+            if (grid[thing.left - 1][thing.top] === 'xwall') {
+                valid.walls++;
+            }
+        }
+        if (grid[thing.left][thing.top + 1][0] === 'x') {
+            valid.down = false;
+            valid.count--;
+            if (grid[thing.left - 1][thing.top] === 'xwall') {
+                valid.walls++;
+            }
+        }
+    } else {
+        if (grid[thing.left - 1][thing.top][0] === 'x' || grid[thing.left - 1][thing.top][0] === 'w') {
+            valid.left = false;
+            valid.count--;
+            if (grid[thing.left - 1][thing.top] === 'xwall') {
+                valid.walls++;
+            }
+        }
+        if (grid[thing.left][thing.top - 1][0] === 'x' || grid[thing.left - 1][thing.top][0] === 'w') {
+            valid.up = false;
+            valid.count--;
+            if (grid[thing.left - 1][thing.top] === 'xwall') {
+                valid.walls++;
+            }
+        }
+        if (grid[thing.left + 1][thing.top][0] === 'x' || grid[thing.left + 1][thing.top][0] === 'w') {
+            valid.right = false;
+            valid.count--;
+            if (grid[thing.left - 1][thing.top] === 'xwall') {
+                valid.walls++;
+            }
+        }
+        if (grid[thing.left][thing.top + 1][0] === 'x' || grid[thing.left][thing.top + 1][0] === 'w') {
+            valid.down = false;
+            valid.count--;
+            if (grid[thing.left - 1][thing.top] === 'xwall') {
+                valid.walls++;
+            }
+        }
     }
-    if (grid[thing.left][thing.top - 1][0] === 'x') {
-        valid.up = false;
-        valid.count--;
-    }
-    if (grid[thing.left + 1][thing.top][0] === 'x') {
-        valid.right = false;
-        valid.count--;
-    }
-    if (grid[thing.left][thing.top + 1][0] === 'x') {
-        valid.down = false;
-        valid.count--;
-    }
+    
     return valid;
 }
 
@@ -348,7 +397,7 @@ function initializeGrid() {
     grid = Array(width);
     for (let i = 0; i < width+1; i++) {
         grid[i] = Array(height);
-        grid[i].fill('');
+        grid[i].fill(' ');
     }
     for (let i = 0; i < things.length; i++) {
         grid[things[i].left][things[i].top] = things[i].type;
@@ -392,15 +441,13 @@ function playerMove(e) {
             player.moved = true;
             player.moveLeft();
         }
-
-        grid[player.oldLeft][player.oldTop] = '';
+        grid[player.oldLeft][player.oldTop][0] = ' ';
         grid[player.left][player.top] = player.type;
 
         if (alternate) {
             moveEnemies();
             alternate = false;
         } else {
-            moveEnemies();
             alternate = true;
         }
     }
