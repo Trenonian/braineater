@@ -208,8 +208,8 @@ function drawWalls() {
 
 function defineEnemies() {
 
-    enemies.push(new Enemy(1, height - 1));
-    enemies.push(new Enemy(width-1, height - 1));
+    //enemies.push(new Enemy(1, height - 1));
+    //enemies.push(new Enemy(width-1, height - 1));
     enemies.push(new Enemy(width-1, 1));
 
     for (let i = 0; i < enemies.length; i++) {
@@ -228,6 +228,8 @@ function moveEnemies() {
             enemies[i].oldTop = enemies[i].top;
             let difx = player.left - enemies[i].left;
             let dify = player.top - enemies[i].top;
+
+            
 
             
             //enemies[i].left = Math.floor((Math.random() * (width - 2)) + 1);
@@ -296,23 +298,37 @@ function moveEnemies() {
                     }
 
                 }
+                if (grid[enemies[i].oldLeft][enemies[i].oldTop][0] === ' ') {
 
-
-
-                if (valid.walls = 3) {
-                    grid[enemies[i].oldLeft][enemies[i].oldTop][0] = 'w';
+                    if(valid.walls = 3) {
+                        grid[enemies[i].oldLeft][enemies[i].oldTop] = 'w' + grid[enemies[i].oldLeft][enemies[i].oldTop].slice(1, grid[enemies[i].oldLeft][enemies[i].oldTop].length);
+                    } else {
+                        grid[enemies[i].oldLeft][enemies[i].oldTop] = ' ' + grid[enemies[i].oldLeft][enemies[i].oldTop].slice(1, grid[enemies[i].oldLeft][enemies[i].oldTop].length);
+                    }
                 } else {
-                    grid[enemies[i].oldLeft][enemies[i].oldTop][0] = ' ';
+                    if (valid.walls = 3) {
+                        grid[enemies[i].oldLeft][enemies[i].oldTop] = 'w';
+                    } else {
+                        grid[enemies[i].oldLeft][enemies[i].oldTop] = ' ';
+                    }
                 }
+
+                console.log(validMoves(enemies[i]));
+                console.log(`left: ${player.left - enemies[i].left}, top: ${player.top - enemies[i].top}`);
+                console.log(`${enemies[i].type}: |${grid[enemies[i].left][enemies[i].top]}|`);
+                console.log(`left: |${grid[enemies[i].left - 1][enemies[i].top]}|`);
+                console.log(`top: |${grid[enemies[i].left][enemies[i].top - 1]}|`);
+                console.log(`right: |${grid[enemies[i].left + 1][enemies[i].top]}|`);
+                console.log(`down: |${grid[enemies[i].left][enemies[i].top + 1]}|`);
 
                 grid[enemies[i].oldLeft][enemies[i].oldTop][0] = ' ';
                 grid[enemies[i].left][enemies[i].top] = enemies[i].type;
+                enemies[i].getBack();
 
 
             } else {
                 enemies[i].moved = false;
             }
-            enemies[i].getBack();
             if (enemies[i].left === player.left && enemies[i].top === player.top) {
                 playing = false;
             }
@@ -419,7 +435,6 @@ function createPlayer() {
 
 
 function playerMove(e) {
-    console.log(e.keyCode);
     if (e.keyCode == 119 || e.keyCode == 115 || e.keyCode == 97 || e.keyCode == 100) {
         player.oldLeft = player.left;
         player.oldTop = player.top;
@@ -441,7 +456,7 @@ function playerMove(e) {
             player.moved = true;
             player.moveLeft();
         }
-        grid[player.oldLeft][player.oldTop][0] = ' ';
+        grid[player.oldLeft][player.oldTop] = ' ';
         grid[player.left][player.top] = player.type;
 
         if (alternate) {
